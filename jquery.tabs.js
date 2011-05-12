@@ -60,7 +60,7 @@
 		return this.each(function(){
 			var elements = $(this).find(settings.elementsSelector);
 			
-			var tabList = $('tabListSelector');
+			var tabList = $(this).find(settings.tabListSelector);
 			if (tabList.length == 0) {
 		  	tabList = $('<div>', settings.tabList);
 				$(this).prepend(tabList);
