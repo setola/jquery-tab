@@ -112,13 +112,15 @@
 	};  
 })(jQuery); 
 
-
+/**
+ * example of use
+ */
+/*
 $(document).ready(function() {
 	$('#tabs').tabs({
 		tabListAnchor:{
 			'class':'tab_controller border_1 autopadding'
 		}
 	});
-
-	$('.tabs_controller').autopadding();
 });
+*/
