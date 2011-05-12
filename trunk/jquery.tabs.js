@@ -58,7 +58,7 @@
 		
 		
 		return this.each(function(){
-			var elements = that.find(settings.elementsSelector);
+			var elements = $(this).find(settings.elementsSelector);
 			
 			var tabList = $('tabListSelector');
 			if (tabList.length == 0) {
