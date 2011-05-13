@@ -46,18 +46,40 @@
 			 * first\last for the first and the last element
 			 * selected for the element corresponding to the current viewing tab
 			 */
-			tabListAnchor				:{},
+			tabListAnchor				:	{},
 			/**
 			 * Duration of a single animation, total duration
 			 * is 2 times this value (one for show() and one for hide())
 			 */
-			timer								:	200
+			timer								:	200,
+			/**
+			 * This callback si binded when the user clicks on an anchor
+			 * of the control bar.
+			 * @param e the event passed from click()
+			 * @param tabList the list of the tabs
+			 * @param element the element to be shown
+			 */
+			onClick							:	function(e, tabList, element){
+				e.preventDefault();
+				e.stopPropagation();
+				
+				tabList.find('.'+settings.classSelected).each(function(){$(this).removeClass(settings.classSelected);});
+				$(this).addClass(settings.classSelected);
+				
+				that.find('.tab.'+settings.classSelected).slideUp(settings.timer, function(){
+					$(this).removeClass(settings.classSelected);
+					element.slideDown(settings.timer, function(){
+						element.addClass(settings.classSelected);
+					});
+				});
+			}
 		};
 		if(options) $.extend(settings,options);
 		var that = $(this);
 		
 		
 		return this.each(function(){
+			var each_that = $(this);
 			var elements = $(this).find(settings.elementsSelector);
 			
 			var tabList = $(this).find(settings.tabListSelector);
@@ -83,19 +105,10 @@
 				if(settings.tabListAnchor) $.extend(settings.tabListAnchor,anchorAttrs);
 				
 				tabList.append(
-					$('<a>',settings.tabListAnchor).click(function(e){
-						e.preventDefault();
-						e.stopPropagation();
-						
-						tabList.find('.'+settings.classSelected).each(function(){$(this).removeClass(settings.classSelected);});
-						$(this).addClass(settings.classSelected);
-						
-						that.find('.tab.'+settings.classSelected).slideUp(settings.timer, function(){
-							$(this).removeClass(settings.classSelected);
-							element.slideDown(settings.timer, function(){
-								element.addClass(settings.classSelected);
-							});
-						});
+					$('<a>',settings.tabListAnchor).click(function(event){
+						if($.isFunction(settings.onClick)){
+							settings.onClick.call(this, event, tabList, element);
+						}
 					})
 				);
 				index++;
@@ -111,16 +124,3 @@
 		});
 	};  
 })(jQuery); 
-
-/**
- * example of use
- */
-/*
-$(document).ready(function() {
-	$('#tabs').tabs({
-		tabListAnchor:{
-			'class':'tab_controller border_1 autopadding'
-		}
-	});
-});
-*/
