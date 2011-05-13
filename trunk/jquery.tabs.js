@@ -59,7 +59,7 @@
 			 * @param tabList the list of the tabs
 			 * @param element the element to be shown
 			 */
-			onClick							:	function(e, tabList, element){
+			onClick							:	function(e, tabList, element, settings, that){
 				e.preventDefault();
 				e.stopPropagation();
 				
@@ -107,7 +107,7 @@
 				tabList.append(
 					$('<a>',settings.tabListAnchor).click(function(event){
 						if($.isFunction(settings.onClick)){
-							settings.onClick.call(this, event, tabList, element);
+							settings.onClick.call(this, event, tabList, element, settings, that);
 						}
 					})
 				);
