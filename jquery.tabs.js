@@ -58,15 +58,17 @@
 			 * @param e the event passed from click()
 			 * @param tabList the list of the tabs
 			 * @param element the element to be shown
+			 * @param that
+			 * @param selectedElement the element currently selected
 			 */
-			onClick							:	function(e, tabList, element, settings, that){
+			onClick							:	function(e, tabList, element, settings, that, selectedElement){
 				e.preventDefault();
 				e.stopPropagation();
 				
 				tabList.find('.'+settings.classSelected).each(function(){$(this).removeClass(settings.classSelected);});
 				$(this).addClass(settings.classSelected);
 				
-				that.find('.tab.'+settings.classSelected).slideUp(settings.timer, function(){
+				that.find(settings.elementsSelector+'.'+settings.classSelected).slideUp(settings.timer, function(){
 					$(this).removeClass(settings.classSelected);
 					element.slideDown(settings.timer, function(){
 						element.addClass(settings.classSelected);
@@ -80,9 +82,9 @@
 		
 		return this.each(function(){
 			var each_that = $(this);
-			var elements = $(this).find(settings.elementsSelector);
+			var elements = each_that.find(settings.elementsSelector);
 			
-			var tabList = $(this).find(settings.tabListSelector);
+			var tabList = each_that.find(settings.tabListSelector);
 			if (tabList.length == 0) {
 		  	tabList = $('<div>', settings.tabList);
 				$(this).prepend(tabList);
@@ -107,7 +109,7 @@
 				tabList.append(
 					$('<a>',settings.tabListAnchor).click(function(event){
 						if($.isFunction(settings.onClick)){
-							settings.onClick.call(this, event, tabList, element, settings, that);
+							settings.onClick.call(this, event, tabList, element, settings, that, tabList.find('.'+settings.classSelected));
 						}
 					})
 				);
