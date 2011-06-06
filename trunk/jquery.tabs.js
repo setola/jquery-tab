@@ -46,45 +46,21 @@
 			 * first\last for the first and the last element
 			 * selected for the element corresponding to the current viewing tab
 			 */
-			tabListAnchor				:	{},
+			tabListAnchor				:{},
 			/**
 			 * Duration of a single animation, total duration
 			 * is 2 times this value (one for show() and one for hide())
 			 */
-			timer								:	200,
-			/**
-			 * This callback si binded when the user clicks on an anchor
-			 * of the control bar.
-			 * @param e the event passed from click()
-			 * @param tabList the list of the tabs
-			 * @param element the element to be shown
-			 * @param that
-			 * @param selectedElement the element currently selected
-			 */
-			onClick							:	function(e, tabList, element, settings, that, selectedElement){
-				e.preventDefault();
-				e.stopPropagation();
-				
-				tabList.find('.'+settings.classSelected).each(function(){$(this).removeClass(settings.classSelected);});
-				$(this).addClass(settings.classSelected);
-				
-				that.find(settings.elementsSelector+'.'+settings.classSelected).slideUp(settings.timer, function(){
-					$(this).removeClass(settings.classSelected);
-					element.slideDown(settings.timer, function(){
-						element.addClass(settings.classSelected);
-					});
-				});
-			}
+			timer								:	200
 		};
 		if(options) $.extend(settings,options);
 		var that = $(this);
 		
 		
 		return this.each(function(){
-			var each_that = $(this);
-			var elements = each_that.find(settings.elementsSelector);
+			var elements = that.find(settings.elementsSelector);
 			
-			var tabList = each_that.find(settings.tabListSelector);
+			var tabList = $('tabListSelector');
 			if (tabList.length == 0) {
 		  	tabList = $('<div>', settings.tabList);
 				$(this).prepend(tabList);
@@ -99,7 +75,7 @@
 				if(index == elements.length-1) firstLastClass += ' last';
 				
 				var anchorAttrs = {
-					'href'		:	'javascript:;',
+					'href'		:	'#!'+$(this).attr('id'),
 					'html'		:	$(this).attr('title'),
 					'class'		:	(settings.tabListAnchor['class']) ? settings.tabListAnchor['class']+firstLastClass : 'tab_controller'+firstLastClass,
 					'id'			:	'tabShow_'+$(this).attr('id')
@@ -107,10 +83,20 @@
 				if(settings.tabListAnchor) $.extend(settings.tabListAnchor,anchorAttrs);
 				
 				tabList.append(
-					$('<a>',settings.tabListAnchor).click(function(event){
-						if($.isFunction(settings.onClick)){
-							settings.onClick.call(this, event, tabList, element, settings, that, tabList.find('.'+settings.classSelected));
-						}
+					$('<a>',settings.tabListAnchor).click(function(e){
+						var buf;
+						e.preventDefault();
+						e.stopPropagation();
+						buf=location.href.split('#!');
+						location.href=buf[0]+'#!'+element.attr('id');
+						tabList.find('.'+settings.classSelected).each(function(){$(this).removeClass(settings.classSelected);});
+						$(this).addClass(settings.classSelected);						
+						that.find('.tab.'+settings.classSelected).slideUp(settings.timer, function(){
+							$(this).removeClass(settings.classSelected);
+							element.slideDown(settings.timer, function(){
+								element.addClass(settings.classSelected);
+							});
+						});
 					})
 				);
 				index++;
@@ -118,7 +104,13 @@
 			
 			tabList.find('a').eq(0).addClass(settings.classSelected);
 			
-
+			var hashtag, tmp;//many thanks to Matteo Canever
+			tmp=location.href.split('#!'); 
+			if (tmp.length > 1){ 
+				hashtag=tmp[tmp.length-1]; 
+				$('a#tabShow_'+hashtag).click(); 
+			}
+			
 			if($.isFunction(settings.after)){
 				settings.after.call(that);
 			}
@@ -126,3 +118,15 @@
 		});
 	};  
 })(jQuery); 
+
+
+$(document).ready(function() {
+	$('#tabs').tabs({
+		tabListAnchor:{
+			'class':'tab_controller border_1 autopadding'
+		},
+		after:  function(that) {	
+			return true;
+		}
+	});
+});
