@@ -1,0 +1,5 @@
+#tabs{width:400px;border:1px dotted red;margin:10px;padding:10px;}
+#tabs .tab{display:none;}
+#tabs .tab.selected{display:block;}
+#tabs .tabs_controller{margin:10px;padding:10px;border:1px dotted blue;}
+#tabs .tab_controller{border:1px solid grey;}
